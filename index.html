@@ -42,7 +42,7 @@
 
         try {
             // 1. 获取文件内容（这里写你的文件名，如 code.txt 或 code.md）
-            const response = await fetch('code.txt');
+            const response = await fetch('code.php');
             
             if (!response.ok) throw new Error(`无法找到文件 (状态码: ${response.status})`);
             
