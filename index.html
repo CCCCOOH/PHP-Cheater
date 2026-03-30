@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP Cheater</title>
+    <style>
+        :root { --primary: #2563eb; --success: #059669; }
+        body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f8fafc; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); text-align: center; }
+        
+        button { 
+            background: var(--primary); color: white; border: none; 
+            padding: 12px 24px; border-radius: 8px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; font-size: 1rem;
+        }
+        button:hover { background: #1d4ed8; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        #status { margin-top: 1rem; font-size: 0.875rem; min-height: 1.25rem; transition: color 0.3s; }
+        .success { color: var(--success); }
+        .error { color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <button id="copyBtn">Copy</button>
+    <div id="status"></div>
+</div>
+
+<script>
+    const btn = document.getElementById('copyBtn');
+    const status = document.getElementById('status');
+
+    btn.addEventListener('click', async () => {
+        // 防止重复点击
+        btn.disabled = true;
+        status.innerText = "正在读取代码...";
+        status.className = "";
+
+        try {
+            // 1. 获取文件内容（这里写你的文件名，如 code.txt 或 code.md）
+            const response = await fetch('code.txt');
+            
+            if (!response.ok) throw new Error(`无法找到文件 (状态码: ${response.status})`);
+            
+            const rawCode = await response.text();
+
+            // 2. 写入剪切板
+            await navigator.clipboard.writeText(rawCode);
+
+            // 3. 成功反馈
+            status.innerText = "✅ 复制成功！已存入剪切板";
+            status.className = "success";
+
+        } catch (err) {
+            console.error(err);
+            status.innerText = "❌ 失败: " + err.message;
+            status.className = "error";
+        } finally {
+            // 3秒后恢复按钮状态
+            setTimeout(() => {
+                btn.disabled = false;
+                status.innerText = "";
+            }, 3000);
+        }
+    });
+</script>
+
+</body>
+</html>
